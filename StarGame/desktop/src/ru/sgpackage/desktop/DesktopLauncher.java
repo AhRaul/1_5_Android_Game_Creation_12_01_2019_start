@@ -8,7 +8,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		System.setProperty("user.name", "Public");
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 1000;
+		config.height = 600;
 		config.width = 500;
 		new LwjglApplication(new StarGame(), config);
 	}
