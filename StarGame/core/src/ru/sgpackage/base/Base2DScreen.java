@@ -58,6 +58,12 @@ public class Base2DScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(worldToGL);
 
         MatrixUtils.calcTransitionMatrix(screenToWorlds, screenBounds, worldBounds);    //расчет матрицы для кликов
+        resize(worldBounds);
+    }
+
+    //аргумент - границы игрового мира  (для переопределения в MenuScreen)
+    public void resize(Rect worldBounds) {
+
     }
 
     @Override
@@ -109,7 +115,7 @@ public class Base2DScreen implements Screen, InputProcessor {
         return false;
     }
 
-    //перегрузка 1:51:00
+    //перегрузка lection3 1:51:00
     public boolean touchDown(Vector2 touch, int pointer) {
         System.out.println("touchDown touch.x = " + touch.x + " touch.y = " + touch.y);
         return false;
