@@ -12,34 +12,26 @@ import ru.sgpackage.base.Base2DScreen;
 import ru.sgpackage.math.Rect;
 import ru.sgpackage.sprite.Background;
 import ru.sgpackage.sprite.Star;
-import ru.sgpackage.sprite.menu.BtnClose;
-import ru.sgpackage.sprite.menu.BtnStart;
 
-//Класс окошка меню игры
-public class MenuScreen extends Base2DScreen {
+//Экран активной игры
+public class GameScreen extends Base2DScreen {
 
     private TextureAtlas atlas;
-	private Texture bg;
-	private Background background;
-	private Star star[];      //множество звезд
-    private BtnClose btnClose;
-    private BtnStart btnStart;
-
-    private GameScreen gameScreen;
+    private Texture bg;
+    private Background background;
+    private Star star[];      //множество звезд
 
     @Override
     public void show() {
         super.show();
 
-		bg = new Texture("starbg.jpg");
-		background = new Background(new TextureRegion(bg));
-		atlas = new TextureAtlas("menuAtlas.tpack");   //добавление трека
+        bg = new Texture("starbg.jpg");
+        background = new Background(new TextureRegion(bg));
+        atlas = new TextureAtlas("menuAtlas.tpack");   //добавление трека
         star = new Star[256];
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
         }
-        btnClose = new BtnClose(atlas);
-        btnStart = new BtnStart(atlas, this);
 
     }
 
@@ -65,8 +57,6 @@ public class MenuScreen extends Base2DScreen {
         for (int i = 0; i < star.length; i++) {
             star[i].draw(batch);
         }
-        btnClose.draw(batch);
-        btnStart.draw(batch);
         batch.end();
     }
 
@@ -76,8 +66,6 @@ public class MenuScreen extends Base2DScreen {
         for (int i = 0; i < star.length; i++) {
             star[i].resize(worldBounds);
         }
-        btnClose.resize(worldBounds);
-        btnStart.resize(worldBounds);
     }
 
     @Override
@@ -89,21 +77,12 @@ public class MenuScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        btnClose.touchDown(touch, pointer);                 //при нажатии проверка действия кнопки меню
-        btnStart.touchDown(touch, pointer);                 //при нажатии проверка действия кнопки меню
         return super.touchDown(touch, pointer);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        btnClose.touchUp(touch, pointer);                   //при отпускании проверка действия кнопки меню
-        btnStart.touchUp(touch, pointer);                   //при отпускании проверка действия кнопки меню
         return super.touchUp(touch, pointer);
     }
 
-    public void changeScreen() {
-        this.dispose();
-        gameScreen = new GameScreen();
-        gameScreen.show();
-    }
 }

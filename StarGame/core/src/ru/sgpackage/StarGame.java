@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import ru.sgpackage.base.Base2DScreen;
+import ru.sgpackage.screen.GameScreen;
 import ru.sgpackage.screen.MenuScreen;
 
 public class StarGame extends Game /*extends ApplicationAdapter*/ {

@@ -4,11 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import ru.sgpackage.math.Rect;
-import ru.sgpackage.screen.MenuScreen;
 
 public class BtnClose extends ScaledTouchUpButton {
 
-    public BtnClose(TextureAtlas atlas, MenuScreen menuScreen) {
+    public BtnClose(TextureAtlas atlas) {
         super(atlas.findRegion("btExit"));
         setHeightProportion(0.1f);
     }

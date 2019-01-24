@@ -1,5 +1,6 @@
 package ru.sgpackage.base;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -8,8 +9,10 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
+import ru.sgpackage.StarGame;
 import ru.sgpackage.math.MatrixUtils;
 import ru.sgpackage.math.Rect;
+import ru.sgpackage.screen.GameScreen;
 
 public class Base2DScreen implements Screen, InputProcessor {
 
@@ -158,4 +161,5 @@ public class Base2DScreen implements Screen, InputProcessor {
     public boolean scrolled(int amount) {
         return false;
     }
+
 }
