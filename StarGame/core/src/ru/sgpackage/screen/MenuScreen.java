@@ -25,7 +25,11 @@ public class MenuScreen extends Base2DScreen {
     private BtnClose btnClose;
     private BtnStart btnStart;
 
-    private GameScreen gameScreen;
+    private StarGame starGame;
+
+    public MenuScreen(StarGame starGame) {
+        this.starGame = starGame;
+    }
 
     @Override
     public void show() {
@@ -102,8 +106,10 @@ public class MenuScreen extends Base2DScreen {
     }
 
     public void changeScreen() {
-        this.dispose();
-        gameScreen = new GameScreen();
-        gameScreen.show();
+        //this.dispose();       //?? нужно ли очистить память от старого окна? (вопрос на лекцию)
+                                //исключено, т.к. вызывает ошибку:
+                                //Exception in thread "LWJGL Application" java.lang.IllegalArgumentException:
+                                //buffer not allocated with newUnsafeByteBuffer or already disposed
+        starGame.setGameScreen();
     }
 }

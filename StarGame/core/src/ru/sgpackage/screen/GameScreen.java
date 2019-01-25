@@ -21,6 +21,12 @@ public class GameScreen extends Base2DScreen {
     private Background background;
     private Star star[];      //множество звезд
 
+    private StarGame starGame;
+
+    public GameScreen(StarGame starGame) {
+        this.starGame = starGame;
+    }
+
     @Override
     public void show() {
         super.show();
