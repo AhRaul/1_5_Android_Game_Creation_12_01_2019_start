@@ -10,8 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import ru.sgpackage.StarGame;
 import ru.sgpackage.base.Base2DScreen;
 import ru.sgpackage.math.Rect;
+import ru.sgpackage.pool.BulletPool;
 import ru.sgpackage.sprite.Background;
 import ru.sgpackage.sprite.Star;
+import ru.sgpackage.sprite.game.MainShip;
 
 //Экран активной игры
 public class GameScreen extends Base2DScreen {
@@ -23,6 +25,10 @@ public class GameScreen extends Base2DScreen {
 
     private StarGame starGame;
 
+    private MainShip mainShip;
+
+    private BulletPool bulletPool;
+
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
     }
@@ -33,11 +39,14 @@ public class GameScreen extends Base2DScreen {
 
         bg = new Texture("starbg.jpg");
         background = new Background(new TextureRegion(bg));
-        atlas = new TextureAtlas("menuAtlas.tpack");   //добавление трека
-        star = new Star[256];
+        atlas = new TextureAtlas("mainAtlas.tpack");   //добавление трека
+        star = new Star[64];                                         //количество звёзд
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
         }
+        bulletPool = new BulletPool();
+        mainShip = new MainShip(atlas, bulletPool);
+
 
     }
 
@@ -45,6 +54,7 @@ public class GameScreen extends Base2DScreen {
     public void render(float delta) {   //60 раз в сек
         super.render(delta);
         update (delta);
+        deleteAllDestroyed();
         draw();
 
     }
@@ -53,6 +63,12 @@ public class GameScreen extends Base2DScreen {
         for (int i = 0; i < star.length; i++) {
             star[i].update(delta);
         }
+        mainShip.update(delta);
+        bulletPool.updateActiveSprites(delta);
+    }
+
+    public void deleteAllDestroyed() {
+        bulletPool.freeAllDestroyedActiveSprites();
     }
 
     public void draw () {
@@ -63,6 +79,8 @@ public class GameScreen extends Base2DScreen {
         for (int i = 0; i < star.length; i++) {
             star[i].draw(batch);
         }
+        mainShip.draw(batch);
+        bulletPool.drawActiveSprites(batch);
         batch.end();
     }
 
@@ -72,13 +90,27 @@ public class GameScreen extends Base2DScreen {
         for (int i = 0; i < star.length; i++) {
             star[i].resize(worldBounds);
         }
+        mainShip.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
         super.dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        mainShip.keyDown(keycode);
+        return super.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        mainShip.keyUp(keycode);
+        return super.keyUp(keycode);
     }
 
     @Override
@@ -89,6 +121,10 @@ public class GameScreen extends Base2DScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
         return super.touchUp(touch, pointer);
+    }
+
+    public void changeScreen() {
+        starGame.setMenuScreen();
     }
 
 }
