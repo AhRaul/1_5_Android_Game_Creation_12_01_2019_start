@@ -1,5 +1,6 @@
 package ru.sgpackage.base;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -8,8 +9,10 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
+import ru.sgpackage.StarGame;
 import ru.sgpackage.math.MatrixUtils;
 import ru.sgpackage.math.Rect;
+import ru.sgpackage.screen.GameScreen;
 
 public class Base2DScreen implements Screen, InputProcessor {
 
@@ -58,6 +61,12 @@ public class Base2DScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(worldToGL);
 
         MatrixUtils.calcTransitionMatrix(screenToWorlds, screenBounds, worldBounds);    //расчет матрицы для кликов
+        resize(worldBounds);
+    }
+
+    //аргумент - границы игрового мира  (для переопределения в MenuScreen)
+    public void resize(Rect worldBounds) {
+
     }
 
     @Override
@@ -109,7 +118,7 @@ public class Base2DScreen implements Screen, InputProcessor {
         return false;
     }
 
-    //перегрузка 1:51:00
+    //перегрузка lection3 1:51:00
     public boolean touchDown(Vector2 touch, int pointer) {
         System.out.println("touchDown touch.x = " + touch.x + " touch.y = " + touch.y);
         return false;
@@ -152,4 +161,5 @@ public class Base2DScreen implements Screen, InputProcessor {
     public boolean scrolled(int amount) {
         return false;
     }
+
 }

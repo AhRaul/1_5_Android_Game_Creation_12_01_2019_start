@@ -7,12 +7,30 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import ru.sgpackage.base.Base2DScreen;
+import ru.sgpackage.screen.GameScreen;
 import ru.sgpackage.screen.MenuScreen;
 
 public class StarGame extends Game /*extends ApplicationAdapter*/ {
+
+	private GameScreen gameScreen;
+	private MenuScreen menuScreen;
+
 	@Override
 	public void create() {
-setScreen(new MenuScreen());
+setScreen(new MenuScreen(this));
+	}
+
+	public void setGameScreen()
+	{
+		gameScreen=new GameScreen(this);
+		setScreen(gameScreen);
+	}
+
+	public void setMenuScreen()
+	{
+		menuScreen=new MenuScreen(this);
+		setScreen(menuScreen);
 	}
 
 //	SpriteBatch batch;
