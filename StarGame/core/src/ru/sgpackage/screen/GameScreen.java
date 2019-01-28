@@ -1,6 +1,7 @@
 package ru.sgpackage.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -29,8 +30,13 @@ public class GameScreen extends Base2DScreen {
 
     private BulletPool bulletPool;
 
+    private Music music;
+
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/MusicFonGame.mp3"));
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
@@ -98,6 +104,8 @@ public class GameScreen extends Base2DScreen {
         bg.dispose();
         atlas.dispose();
         bulletPool.dispose();
+        music.dispose();
+        mainShip.disposeShipSounds();
         super.dispose();
     }
 

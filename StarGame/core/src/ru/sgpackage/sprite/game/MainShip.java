@@ -1,6 +1,8 @@
 package ru.sgpackage.sprite.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -26,11 +28,14 @@ public class MainShip extends Sprite {
 
     private int pointer;                            //хранение номера последнего активного пальца
 
+    private Sound ShootSound;
+
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletPool = bulletPool;
         setHeightProportion(0.15f);
+        ShootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot.mp3"));
     }
 
     public void resize(Rect worldBounds)  {
@@ -95,14 +100,14 @@ public class MainShip extends Sprite {
         //вызов тач даун корабля
         if(!isPressedLeft && leftPlace(touch)) { //если левая кнопка не нажата || если попали по левой области
             this.pointer = pointer;         	//при правильном нажатии сохранение номера пальца
-            this.isPressedLeft = true;          //сохранение состояния нажаточни кнопки
-            this.isPressedRight = false;          //сохранение состояния нажаточни кнопки
+            this.isPressedLeft = true;          //сохранение состояния нажатости кнопки
+            this.isPressedRight = false;          //сохранение состояния нажатостии кнопки
             moveLeft();
             return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
         } else if(!isPressedRight && !leftPlace(touch)) {	//если правая кнопка не нажата || если не попали по левой области
             this.pointer = pointer;         	//при правильном нажатии сохранение номера пальца
             this.isPressedLeft = false;
-            this.isPressedRight = true;          //сохранение состояния нажаточни кнопки
+            this.isPressedRight = true;          //сохранение состояния нажатости кнопки
             moveRight();
             return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
         } else {
@@ -145,6 +150,7 @@ public class MainShip extends Sprite {
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.setDamage(this, bulletRegion, pos, new Vector2(0, 0.5f), 0.01f, worldBounds, 1);
+        ShootSound.play(0.2f);
     }
 
     //возвращает true, при попадании пальца в левую область экрана
@@ -155,6 +161,11 @@ public class MainShip extends Sprite {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void disposeShipSounds() {
+        ShootSound.dispose();
     }
 
 }
