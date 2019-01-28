@@ -40,9 +40,12 @@ public class MainShip extends Sprite {
     }
 
     @Override
-    public void update(float delta) {
+    public void update(float delta) {       //?? Откуда берется дельта?? , не нашел истоков
         super.update(delta);
         pos.mulAdd(v, delta);
+        if (pos.x < worldBounds.getLeft()+ 0.1 || pos.x > worldBounds.getRight()-0.1) { //условие для остановки движения корабля
+            stop();
+        }
     }
 
     public boolean keyDown(int keycode) {
@@ -120,11 +123,17 @@ public class MainShip extends Sprite {
 
     //движение корабля вправо
     private void moveRight() {
+        if(pos.x > worldBounds.getRight()-0.1) {
+            return;
+        }
         v.set(v0);
     }
 
     //движение корабля влево
     private void moveLeft() {
+        if(pos.x < worldBounds.getLeft()+ 0.1) {
+            return;
+        }
         v.set(v0).rotate(180);
     }
 
@@ -138,9 +147,10 @@ public class MainShip extends Sprite {
         bullet.setDamage(this, bulletRegion, pos, new Vector2(0, 0.5f), 0.01f, worldBounds, 1);
     }
 
-    //возвращает true, при попадании вектора в левую область экрана
+    //возвращает true, при попадании пальца в левую область экрана
     private boolean leftPlace (Vector2 vector) {
-        if(worldBounds.getLeft() <= vector.x && 0.0f >= vector.x) {
+        //if(worldBounds.getLeft() <= vector.x && 0.0f >= vector.x) {
+        if(0.0f >= vector.x) {
             return true;
         } else {
             return false;
