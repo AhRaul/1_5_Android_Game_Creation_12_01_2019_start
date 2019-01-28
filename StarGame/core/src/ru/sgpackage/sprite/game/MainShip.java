@@ -24,6 +24,8 @@ public class MainShip extends Sprite {
 
     private TextureRegion bulletRegion;
 
+    private int pointer;                            //хранение номера последнего активного пальца
+
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
@@ -85,6 +87,37 @@ public class MainShip extends Sprite {
         return false;
     }
 
+    //Дома проверить (корабль должен двигаться в направлении последней нажатой стороны)
+    public boolean touchDown(Vector2 touch, int pointer) {
+        //вызов тач даун корабля
+        if(!isPressedLeft && leftPlace(touch)) { //если левая кнопка не нажата || если попали по левой области
+            this.pointer = pointer;         	//при правильном нажатии сохранение номера пальца
+            this.isPressedLeft = true;          //сохранение состояния нажаточни кнопки
+            this.isPressedRight = false;          //сохранение состояния нажаточни кнопки
+            moveLeft();
+            return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
+        } else if(!isPressedRight && !leftPlace(touch)) {	//если правая кнопка не нажата || если не попали по левой области
+            this.pointer = pointer;         	//при правильном нажатии сохранение номера пальца
+            this.isPressedLeft = false;
+            this.isPressedRight = true;          //сохранение состояния нажаточни кнопки
+            moveRight();
+            return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
+        } else {
+            return false;
+        }
+    }
+
+    //проверить дома (последний нажимавший палец, отпуская экран, все останавливает)
+    public boolean touchUp(int pointer) {
+        //вызов тач ап корабля
+        if(this.pointer == pointer) {
+            this.isPressedLeft = false;
+            this.isPressedRight = false;
+            stop();
+        }
+        return false;
+    }
+
     //движение корабля вправо
     private void moveRight() {
         v.set(v0);
@@ -103,6 +136,15 @@ public class MainShip extends Sprite {
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.setDamage(this, bulletRegion, pos, new Vector2(0, 0.5f), 0.01f, worldBounds, 1);
+    }
+
+    //возвращает true, при попадании вектора в левую область экрана
+    private boolean leftPlace (Vector2 vector) {
+        if(worldBounds.getLeft() <= vector.x && 0.0f >= vector.x) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
