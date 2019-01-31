@@ -43,7 +43,7 @@ public class MainShip extends Ship {
         reloadTimer += delta;       //таймер, связанный с приходящей времени delta;
         if(reloadTimer >= reloadInterval) {     //при совпадении значения таймера стрельбы и заданного интервала стрельбы
             reloadTimer = 0f;
-            //shoot();
+            shoot();
         }
         if (pos.x < worldBounds.getLeft()+ 0.06f || pos.x > worldBounds.getRight()-0.06f) { //условие для остановки движения корабля при приближении к границе экрана
             stop();
