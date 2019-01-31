@@ -1,6 +1,5 @@
 package ru.sgpackage.base;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -9,17 +8,15 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.sgpackage.StarGame;
 import ru.sgpackage.math.MatrixUtils;
 import ru.sgpackage.math.Rect;
-import ru.sgpackage.screen.GameScreen;
 
 public class Base2DScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
 
     private Rect screenBounds;      //границы области рисования в пикселях
-    private Rect worldBounds;       //границы проекции координат игрового мира
+    protected Rect worldBounds;       //границы проекции координат игрового мира
     private Rect glBounds;          //Квадрат на который все проецируется, границы OpenGL
 
     private Matrix4 worldToGL;      //матрица 4 на 4 для перевода из мировой системы координат в OpenGL

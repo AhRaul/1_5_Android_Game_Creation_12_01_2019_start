@@ -99,7 +99,7 @@ public class Sprite extends Rect {
         return isDestroyed;
     }
 
-    public void disposeShipSounds() {
+    public void dispose() {
 
     }
 

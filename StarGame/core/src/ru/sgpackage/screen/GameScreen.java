@@ -12,9 +12,13 @@ import ru.sgpackage.StarGame;
 import ru.sgpackage.base.Base2DScreen;
 import ru.sgpackage.math.Rect;
 import ru.sgpackage.pool.BulletPool;
+import ru.sgpackage.pool.EnemyPool;
+import ru.sgpackage.pool.ExplosionPool;
 import ru.sgpackage.sprite.Background;
 import ru.sgpackage.sprite.Star;
+import ru.sgpackage.sprite.game.Explosion;
 import ru.sgpackage.sprite.game.MainShip;
+import ru.sgpackage.utils.EnemyEmitter;
 
 //Экран активной игры
 public class GameScreen extends Base2DScreen {
@@ -29,8 +33,13 @@ public class GameScreen extends Base2DScreen {
     private MainShip mainShip;
 
     private BulletPool bulletPool;
+    private ExplosionPool explosionPool;
 
     private Music music;
+
+    private EnemyEmitter enemyEmitter;          //задать параметры вражеских кораблей
+
+    private EnemyPool enemyPool;    //инициализация пула вражеских генерируемых кораблей
 
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
@@ -51,9 +60,11 @@ public class GameScreen extends Base2DScreen {
             star[i] = new Star(atlas);
         }
         bulletPool = new BulletPool();
+        explosionPool = new ExplosionPool(atlas);
+        enemyPool = new EnemyPool(bulletPool);
         mainShip = new MainShip(atlas, bulletPool);
 
-
+        enemyEmitter = new EnemyEmitter(atlas, enemyPool, worldBounds);
     }
 
     @Override
@@ -71,10 +82,15 @@ public class GameScreen extends Base2DScreen {
         }
         mainShip.update(delta);
         bulletPool.updateActiveSprites(delta);
+        explosionPool.updateActiveSprites(delta);
+        enemyPool.updateActiveSprites(delta);       //движение вражеских кораблей за счет передачи времени
+        enemyEmitter.generate(delta);               //генератор вражеских кораблей по времени
     }
 
     public void deleteAllDestroyed() {
         bulletPool.freeAllDestroyedActiveSprites();
+        explosionPool.freeAllDestroyedActiveSprites();
+        enemyPool.freeAllDestroyedActiveSprites();          //стирание неиспользованных пулов
     }
 
     public void draw () {
@@ -87,11 +103,14 @@ public class GameScreen extends Base2DScreen {
         }
         mainShip.draw(batch);
         bulletPool.drawActiveSprites(batch);
+        explosionPool.drawActiveSprites(batch);
+        enemyPool.drawActiveSprites(batch);         //отображение активных кораблей
         batch.end();
     }
 
     @Override
     public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
         background.resize(worldBounds);
         for (int i = 0; i < star.length; i++) {
             star[i].resize(worldBounds);
@@ -99,13 +118,16 @@ public class GameScreen extends Base2DScreen {
         mainShip.resize(worldBounds);
     }
 
+    //очистка памяти при завершении игры
     @Override
     public void dispose() {
         bg.dispose();
         atlas.dispose();
         bulletPool.dispose();
+        explosionPool.dispose();
+        enemyPool.dispose();
         music.dispose();
-        mainShip.disposeShipSounds();
+        mainShip.dispose();
         super.dispose();
     }
 
@@ -123,6 +145,9 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
+        //тест взрыва
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(0.15f, touch);
         mainShip.touchDown(touch, pointer);		//добавил в блокноте, проверить дома
         return super.touchDown(touch, pointer);
     }
