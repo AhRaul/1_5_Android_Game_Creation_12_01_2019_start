@@ -1,6 +1,7 @@
 package ru.sgpackage.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -27,8 +28,16 @@ public class MenuScreen extends Base2DScreen {
 
     private StarGame starGame;
 
+    private Music music;
+
+
+
     public MenuScreen(StarGame starGame) {
         this.starGame = starGame;
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/MusicFonMenu.mp3"));
+        music.setLooping(true);
+        music.play();
+
     }
 
     @Override
@@ -44,6 +53,7 @@ public class MenuScreen extends Base2DScreen {
         }
         btnClose = new BtnClose(atlas);
         btnStart = new BtnStart(atlas, this);
+
 
     }
 
@@ -88,6 +98,7 @@ public class MenuScreen extends Base2DScreen {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        music.dispose();
         super.dispose();
     }
 
@@ -106,10 +117,6 @@ public class MenuScreen extends Base2DScreen {
     }
 
     public void changeScreen() {
-        //this.dispose();       //?? нужно ли очистить память от старого окна? (вопрос на лекцию)
-                                //исключено, т.к. вызывает ошибку:
-                                //Exception in thread "LWJGL Application" java.lang.IllegalArgumentException:
-                                //buffer not allocated with newUnsafeByteBuffer or already disposed
         starGame.setGameScreen();
     }
 }

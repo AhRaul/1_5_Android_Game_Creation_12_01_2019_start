@@ -14,8 +14,8 @@ public class BtnClose extends ScaledTouchUpButton {
 
     @Override
     public void resize(Rect worldBounds) {
-        float posX = worldBounds.getRight()*0.8f;
-        float posY = 0.4f;
+        float posX = worldBounds.getRight()-0.1f;
+        float posY = worldBounds.getTop()-0.1f;
         pos.set(posX, posY);
     }
 
