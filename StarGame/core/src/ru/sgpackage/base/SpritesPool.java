@@ -12,7 +12,7 @@ public abstract class SpritesPool<T extends Sprite> {
 
     protected abstract T newObject();
 
-    public T obtain() {
+    public T obtain(String info) {
         T object;
         if (freeObjects.isEmpty()) {    //поиск свободных обьектов
             object = newObject();       //если их нет, создать новый обьект
@@ -20,7 +20,7 @@ public abstract class SpritesPool<T extends Sprite> {
             object = freeObjects.remove(freeObjects.size() -1);
         }
         activeObjects.add(object);
-        System.out.println("active/free:" + activeObjects.size() + "/" + freeObjects.size());          //вывод информации о массиве пуль
+        System.out.println(info + " active/free:" + activeObjects.size() + "/" + freeObjects.size());          //вывод информации о массиве
         return object;
     }
 
@@ -38,21 +38,21 @@ public abstract class SpritesPool<T extends Sprite> {
         }
     }
 
-    public void freeAllDestroyedActiveSprites() {
+    public void freeAllDestroyedActiveSprites(String info) {
         for (int i = 0; i<activeObjects.size(); i++) {
             T sprite = activeObjects.get(i);
             if(sprite.isDestroyed()) {
-                free(sprite);
+                free(sprite, info);
                 i--;
             }
         }
     }
 
-    public void free(T object) {    //метод освобождения обьекта
+    public void free(T object, String info) {    //метод освобождения обьекта
         activeObjects.remove(object);
         freeObjects.add(object);
         object.flushDestroy();      //т.к. обьект не помечен на удаление, подготовка к повторному использованию
-        System.out.println("active/free:" + activeObjects.size() + "/" + freeObjects.size());          //вывод информации о массиве пуль
+        System.out.println(info + " active/free:" + activeObjects.size() + "/" + freeObjects.size());          //вывод информации о массиве пуль
     }
 
     public List<T> getActiveObjects() {

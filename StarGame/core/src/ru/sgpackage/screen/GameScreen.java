@@ -88,9 +88,9 @@ public class GameScreen extends Base2DScreen {
     }
 
     public void deleteAllDestroyed() {
-        bulletPool.freeAllDestroyedActiveSprites();
-        explosionPool.freeAllDestroyedActiveSprites();
-        enemyPool.freeAllDestroyedActiveSprites();          //стирание неиспользованных пулов
+        bulletPool.freeAllDestroyedActiveSprites("bullet");
+        explosionPool.freeAllDestroyedActiveSprites("explosion");
+        enemyPool.freeAllDestroyedActiveSprites("enemy");          //стирание неиспользованных пулов
     }
 
     public void draw () {
@@ -146,7 +146,7 @@ public class GameScreen extends Base2DScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
         //тест взрыва
-        Explosion explosion = explosionPool.obtain();
+        Explosion explosion = explosionPool.obtain("explosion");
         explosion.set(0.15f, touch);
         mainShip.touchDown(touch, pointer);		//добавил в блокноте, проверить дома
         return super.touchDown(touch, pointer);

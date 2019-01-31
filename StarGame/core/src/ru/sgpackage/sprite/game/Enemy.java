@@ -4,11 +4,13 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import ru.sgpackage.math.Rect;
 import ru.sgpackage.pool.BulletPool;
 
 public class Enemy extends Ship {
 
     private Vector2 v0 = new Vector2();
+    private Rect worldBounds;
 
     public Enemy(Sound shootSound, BulletPool bulletPool) {
         super();
@@ -22,6 +24,10 @@ public class Enemy extends Ship {
     public void update(float delta) {
         super.update(delta);
         this.pos.mulAdd(v, delta);
+        //нужен запас высоты для новых обьектов, иначе они вылетают из пула не успев в него попасть, т.к. вражеские корабли появляются за видимой областью экрана
+        if(isOutside(worldBounds)) {
+            destroy();
+        }
     }
 
     public void set(
@@ -33,7 +39,8 @@ public class Enemy extends Ship {
             int bulletDamage,
             float reloadInterval,
             float height,
-            int hp
+            int hp,
+            Rect worldBounds
     ) {
         this.regions = regions;
         this.v0.set(v0);
@@ -46,5 +53,6 @@ public class Enemy extends Ship {
         this.hp = hp;
         reloadTimer = reloadInterval;       //выстрелы при появлении корабля
         v.set(v0);
+        this.worldBounds = worldBounds;
     }
 }

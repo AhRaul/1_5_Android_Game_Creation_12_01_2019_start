@@ -44,7 +44,7 @@ public class EnemyEmitter {
         generateTimer += delta;
         if(generateTimer >= generateInterval) {
             generateTimer = 0f;
-            Enemy enemy = enemyPool.obtain();        //достаем из пула обьектов новый корабль
+            Enemy enemy = enemyPool.obtain("Enemy");        //достаем из пула обьектов новый корабль
             enemy.set(
                     enemySmallRegion,
                     enemySmallV,
@@ -54,7 +54,8 @@ public class EnemyEmitter {
                     ENEMY_SMALL_DAMAGE,
                     ENEMY_SMALL_RELOAD_INTERVAL,
                     ENEMY_SMALL_HEIGHT,
-                    ENEMY_SMALL_HP
+                    ENEMY_SMALL_HP,
+                    worldBounds
             );
             //интервал появления корабля по осям x и y
             enemy.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemy.getHalfWidth(), worldBounds.getRight() - enemy.getHalfWidth());

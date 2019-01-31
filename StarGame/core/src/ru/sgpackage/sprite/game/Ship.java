@@ -42,7 +42,7 @@ public class Ship extends Sprite {
     }
 
     public void shoot() {
-        Bullet bullet = bulletPool.obtain();
+        Bullet bullet = bulletPool.obtain("bullet");
         bullet.set(this, bulletRegion, pos, bulletV, bulletHeight, worldBounds, damage);
         shootSound.play(0.1f);
     }
