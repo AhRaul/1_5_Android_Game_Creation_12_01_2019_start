@@ -148,7 +148,6 @@ public class MainShip extends Ship {
 
     //возвращает true, при попадании пальца в левую область экрана
     private boolean leftPlace (Vector2 vector) {
-        //if(worldBounds.getLeft() <= vector.x && 0.0f >= vector.x) {
         if(0.0f >= vector.x) {
             return true;
         } else {

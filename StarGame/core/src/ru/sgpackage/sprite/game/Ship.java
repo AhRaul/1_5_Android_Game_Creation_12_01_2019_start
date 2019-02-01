@@ -47,6 +47,8 @@ public class Ship extends Sprite {
         shootSound.play(0.1f);
     }
 
+
+
     @Override
     public void dispose() {
         shootSound.dispose();

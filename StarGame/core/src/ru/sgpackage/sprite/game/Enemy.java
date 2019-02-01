@@ -10,7 +10,6 @@ import ru.sgpackage.pool.BulletPool;
 public class Enemy extends Ship {
 
     private Vector2 v0 = new Vector2();
-    private Rect worldBounds;
 
     public Enemy(Sound shootSound, BulletPool bulletPool) {
         super();
@@ -24,9 +23,16 @@ public class Enemy extends Ship {
     public void update(float delta) {
         super.update(delta);
         this.pos.mulAdd(v, delta);
-        //нужен запас высоты для новых обьектов, иначе они вылетают из пула не успев в него попасть, т.к. вражеские корабли появляются за видимой областью экрана
+
         if(isOutside(worldBounds)) {
             destroy();
+        }
+        if(this.pos.y < worldBounds.getTop()) {        //условие, запрещающее сттрельбу до тех пор, пока центр корабля не появится на экране
+            reloadTimer += delta;
+            if (reloadTimer >= reloadInterval) {     //при совпадении значения таймера стрельбы и заданного интервала стрельбы
+                reloadTimer = 0f;                    //обнуляется таймер
+                shoot();                             //происходит стрельба
+            }
         }
     }
 
@@ -51,7 +57,7 @@ public class Enemy extends Ship {
         this.reloadInterval = reloadInterval;
         setHeightProportion(height);
         this.hp = hp;
-        reloadTimer = reloadInterval;       //выстрелы при появлении корабля
+        reloadTimer = reloadInterval;                   //выстрелы при появлении корабля
         v.set(v0);
         this.worldBounds = worldBounds;
     }

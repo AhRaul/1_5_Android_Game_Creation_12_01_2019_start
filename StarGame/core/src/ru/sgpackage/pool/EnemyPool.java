@@ -12,7 +12,7 @@ public class EnemyPool extends SpritesPool<Enemy> {
     private BulletPool bulletPool;
 
     public EnemyPool(BulletPool bulletPool) {
-        this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot7.wav"));
+        this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot1.mp3"));
         this.bulletPool = bulletPool;
     }
 
