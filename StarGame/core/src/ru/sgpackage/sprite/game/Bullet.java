@@ -42,4 +42,12 @@ public class Bullet extends Sprite {
         this.worldBounds = worldBounds;
         this.damage = damage;
     }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public Object getOwner() {
+        return owner;
+    }
 }
