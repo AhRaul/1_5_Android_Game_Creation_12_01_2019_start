@@ -2,53 +2,50 @@ package ru.sgpackage.sprite.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.sgpackage.base.Sprite;
 import ru.sgpackage.math.Rect;
 import ru.sgpackage.pool.BulletPool;
 
-public class MainShip extends Sprite {
-
-    private Rect worldBounds;
+public class MainShip extends Ship {
 
     private final Vector2 v0 = new Vector2(0.5f, 0f);
-
-    private Vector2 v = new Vector2();
 
     private boolean isPressedLeft;      //хранение состояния нажатости кнопки
     private boolean isPressedRight;
 
-    private BulletPool bulletPool;
-
-    private TextureRegion bulletRegion;
-
     private int pointer;                            //хранение номера последнего активного пальца
 
-    private Sound ShootSound;
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletPool = bulletPool;
+        this.reloadInterval = 0.2f;
         setHeightProportion(0.15f);
-        ShootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot.mp3"));
+        this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot7.wav"));
+        this.bulletV = new Vector2(0, 0.5f);
+        this.bulletHeight = 0.01f;
+        this.damage = 1;
+        this.hp = 100;
     }
 
     public void resize(Rect worldBounds)  {
         super.resize(worldBounds);
         setBottom(worldBounds.getBottom() + 0.05f);
-        this.worldBounds = worldBounds;
     }
 
     @Override
     public void update(float delta) {       //?? Откуда берется дельта?? , не нашел истоков
         super.update(delta);
         pos.mulAdd(v, delta);
-        if (pos.x < worldBounds.getLeft()+ 0.1 || pos.x > worldBounds.getRight()-0.1) { //условие для остановки движения корабля
+        reloadTimer += delta;       //таймер, связанный с приходящей времени delta;
+        if(reloadTimer >= reloadInterval) {     //при совпадении значения таймера стрельбы и заданного интервала стрельбы
+            reloadTimer = 0f;
+            shoot();
+        }
+        if (pos.x < worldBounds.getLeft()+ 0.06f || pos.x > worldBounds.getRight()-0.06f) { //условие для остановки движения корабля при приближении к границе экрана
             stop();
         }
     }
@@ -65,9 +62,9 @@ public class MainShip extends Sprite {
                 isPressedRight = true;
                 moveRight();
                 break;
-            case Input.Keys.UP: //стрельба при нажатии стрелки вверх
-                shoot();
-                break;
+//            case Input.Keys.UP: //стрельба при нажатии стрелки вверх
+//                shoot();
+//                break;
         }
         return false;
     }
@@ -128,7 +125,7 @@ public class MainShip extends Sprite {
 
     //движение корабля вправо
     private void moveRight() {
-        if(pos.x > worldBounds.getRight()-0.1) {
+        if(pos.x > worldBounds.getRight()-0.065f) {      //условие блокировки движения при нажатии, если корабль уже прижат к границе
             return;
         }
         v.set(v0);
@@ -136,7 +133,7 @@ public class MainShip extends Sprite {
 
     //движение корабля влево
     private void moveLeft() {
-        if(pos.x < worldBounds.getLeft()+ 0.1) {
+        if(pos.x < worldBounds.getLeft()+0.065f) {       //условие блокировки тача
             return;
         }
         v.set(v0).rotate(180);
@@ -147,25 +144,15 @@ public class MainShip extends Sprite {
         v.setZero();            //что эффективнее: setZero() или set(0,0)? Зачем нужен отдельный целый метод?
     }
 
-    private void shoot() {
-        Bullet bullet = bulletPool.obtain();
-        bullet.setDamage(this, bulletRegion, pos, new Vector2(0, 0.5f), 0.01f, worldBounds, 1);
-        ShootSound.play(0.2f);
-    }
+
 
     //возвращает true, при попадании пальца в левую область экрана
     private boolean leftPlace (Vector2 vector) {
-        //if(worldBounds.getLeft() <= vector.x && 0.0f >= vector.x) {
         if(0.0f >= vector.x) {
             return true;
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void disposeShipSounds() {
-        ShootSound.dispose();
     }
 
 }

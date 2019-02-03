@@ -47,7 +47,7 @@ public class MenuScreen extends Base2DScreen {
 		bg = new Texture("starbg.jpg");
 		background = new Background(new TextureRegion(bg));
 		atlas = new TextureAtlas("menuAtlas.tpack");   //добавление трека
-        star = new Star[256];
+        star = new Star[32];
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
         }
