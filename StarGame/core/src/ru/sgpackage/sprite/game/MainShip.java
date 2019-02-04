@@ -11,6 +11,8 @@ import ru.sgpackage.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
+    private static final int MAX_HP_FOR_MAIN = 10;
+
     private final Vector2 v0 = new Vector2(0.5f, 0f);
 
     private boolean isPressedLeft;      //хранение состояния нажатости кнопки
@@ -30,7 +32,7 @@ public class MainShip extends Ship {
         this.bulletV = new Vector2(0, 0.5f);
         this.bulletHeight = 0.01f;
         this.damage = 1;
-        this.hp = 10;
+        this.hp = MAX_HP_FOR_MAIN;
     }
 
     public void resize(Rect worldBounds)  {
@@ -164,6 +166,11 @@ public class MainShip extends Ship {
                 || bullet.getBottom() > pos.y
                 || bullet.getTop() < getBottom()
         );
+    }
+
+    public void restartGame() {     //обновление корабля при перезапуске игры
+        stop();
+        this.hp = MAX_HP_FOR_MAIN;
     }
 
 }

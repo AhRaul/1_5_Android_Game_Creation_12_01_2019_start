@@ -18,10 +18,12 @@ import ru.sgpackage.pool.EnemyPool;
 import ru.sgpackage.pool.ExplosionPool;
 import ru.sgpackage.sprite.Background;
 import ru.sgpackage.sprite.Star;
+import ru.sgpackage.sprite.death.BtnNewGame;
+import ru.sgpackage.sprite.death.MessageGameOver;
 import ru.sgpackage.sprite.game.Bullet;
 import ru.sgpackage.sprite.game.Enemy;
-import ru.sgpackage.sprite.game.Explosion;
 import ru.sgpackage.sprite.game.MainShip;
+import ru.sgpackage.sprite.menu.BtnClose;
 import ru.sgpackage.utils.EnemyEmitter;
 
 //Экран активной игры
@@ -45,6 +47,11 @@ public class GameScreen extends Base2DScreen {
 
     private EnemyPool enemyPool;    //инициализация пула вражеских генерируемых кораблей
 
+    private BtnNewGame btnNewGame;
+    private MessageGameOver messageGameOver;
+    private BtnClose btnClose;
+    private TextureAtlas atlasClose;
+
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/MusicFonGame.mp3"));
@@ -59,6 +66,7 @@ public class GameScreen extends Base2DScreen {
         bg = new Texture("starbg.jpg");
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas("mainAtlas.tpack");   //добавление трека
+        atlasClose = new TextureAtlas("menuAtlas.tpack");
         star = new Star[64];                                         //количество звёзд
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
@@ -69,6 +77,11 @@ public class GameScreen extends Base2DScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, mainShip);
 
         enemyEmitter = new EnemyEmitter(atlas, enemyPool, worldBounds);
+
+        btnNewGame = new BtnNewGame(atlas, mainShip, worldBounds);
+        messageGameOver = new MessageGameOver(atlas);
+        btnClose = new BtnClose(atlasClose);
+
     }
 
     @Override
@@ -87,12 +100,11 @@ public class GameScreen extends Base2DScreen {
         }
         if(!mainShip.isDestroyed()) {
             mainShip.update(delta);
+            enemyEmitter.generate(delta);               //генератор вражеских кораблей по времени
+            enemyPool.updateActiveSprites(delta);       //движение вражеских кораблей за счет передачи времени
         }
-
         bulletPool.updateActiveSprites(delta);
         explosionPool.updateActiveSprites(delta);
-        enemyPool.updateActiveSprites(delta);       //движение вражеских кораблей за счет передачи времени
-        enemyEmitter.generate(delta);               //генератор вражеских кораблей по времени
     }
 
     public void checkCollisions() {
@@ -138,6 +150,14 @@ public class GameScreen extends Base2DScreen {
                 }
             }
         }
+
+        //проверка закончилась ли игра, для уничтожения оставшихся целей
+        if(mainShip.isDestroyed()) {
+            for (Enemy enemy : enemyList) {
+                enemy.destroy();
+                enemy.boom();                   //бум, для красоты
+            }
+        }
     }
 
     private void deleteAllDestroyed() {
@@ -156,10 +176,16 @@ public class GameScreen extends Base2DScreen {
         }
         if(!mainShip.isDestroyed()) {
             mainShip.draw(batch);
+            enemyPool.drawActiveSprites(batch);         //отображение активных кораблей
         }
         bulletPool.drawActiveSprites(batch);
         explosionPool.drawActiveSprites(batch);
-        enemyPool.drawActiveSprites(batch);         //отображение активных кораблей
+        if(mainShip.isDestroyed()) {                    //если корабль уничтожен, вывести кнопку перезапуска
+            messageGameOver.draw(batch);
+            btnNewGame.draw(batch);
+            btnClose.draw(batch);
+        }
+
         batch.end();
     }
 
@@ -171,6 +197,9 @@ public class GameScreen extends Base2DScreen {
             star[i].resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+        btnNewGame.resize(worldBounds);
+        messageGameOver.resize(worldBounds);    //ворлд боундс тут просто так (на всякий случай), чтоб не нарушать устоявшуюся форму записи
+        btnClose.resize(worldBounds);
     }
 
     //очистка памяти при завершении игры
@@ -211,6 +240,11 @@ public class GameScreen extends Base2DScreen {
         if(!mainShip.isDestroyed()) {
             mainShip.touchDown(touch, pointer);        //добавил в блокноте, проверить дома
         }
+        if(mainShip.isDestroyed()) {
+            btnNewGame.touchDown(touch, pointer);
+            btnClose.touchDown(touch, pointer);
+        }
+
         return super.touchDown(touch, pointer);
     }
 
@@ -218,6 +252,10 @@ public class GameScreen extends Base2DScreen {
     public boolean touchUp(Vector2 touch, int pointer) {
         if(!mainShip.isDestroyed()) {
             mainShip.touchUp(pointer);                        //добавил в блокноте, проверить дома
+        }
+        if(mainShip.isDestroyed()) {
+            btnNewGame.touchUp(touch, pointer);
+            btnClose.touchUp(touch, pointer);
         }
         return super.touchUp(touch, pointer);
     }
