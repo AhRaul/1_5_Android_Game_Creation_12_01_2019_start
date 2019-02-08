@@ -23,14 +23,14 @@ public class EnemyEmitter {
     private static final float ENEMY_MIDDLE_BULLET_VY = -0.4f;    //скорость и направление средней пули
     private static final int ENEMY_MIDDLE_DAMAGE = 3;
     private static final float ENEMY_MIDDLE_RELOAD_INTERVAL = 2.5f;   //перезарядка средней пули
-    private static final int ENEMY_MIDDLE_HP = 2;
+    private static final int ENEMY_MIDDLE_HP = 3;
 
     private static final float ENEMY_BIG_HEIGHT = 0.2f;
     private static final float ENEMY_BIG_BULLET_HEIGHT = 0.03f;    //размер пули большого корабля
     private static final float ENEMY_BIG_BULLET_VY = -0.3f;    //скорость и направление большой пули
     private static final int ENEMY_BIG_DAMAGE = 5;
     private static final float ENEMY_BIG_RELOAD_INTERVAL = 3f;      //перезарядка большой пули
-    private static final int ENEMY_BIG_HP = 3;
+    private static final int ENEMY_BIG_HP = 5;
 
     private Vector2 enemySmallV = new Vector2(0, -0.2f);        //вектор скорости движения малого корабля
     private Vector2 enemyMiddleV = new Vector2(0, -0.175f);        //вектор скорости движения среднего корабля
@@ -70,7 +70,7 @@ public class EnemyEmitter {
             generateTimer = 0f;
             Enemy enemy = enemyPool.obtain("Enemy");        //достаем из пула обьектов новый корабль
             randomEnemy = (int)(Math.random()*100);                 //случайное число интервал
-            if(randomEnemy<40) {                                    //вероятность появления малого корабля 40%
+            if(randomEnemy<50) {                                    //вероятность появления малого корабля 50%
                 enemy.set(
                         enemySmallRegion,
                         enemySmallV,
@@ -83,7 +83,7 @@ public class EnemyEmitter {
                         ENEMY_SMALL_HP,
                         worldBounds
                 );
-            } else if (randomEnemy>=40 && randomEnemy < 80) {     //вероятность появления среднего корабля 30%
+            } else if (randomEnemy < 80) {     //вероятность появления среднего корабля 30%
                 enemy.set(
                         enemyMiddleRegion,
                         enemyMiddleV,

@@ -7,8 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.sgpackage.math.Rect;
 import ru.sgpackage.pool.BulletPool;
+import ru.sgpackage.pool.ExplosionPool;
 
 public class MainShip extends Ship {
+
+    private static final int MAX_HP_FOR_MAIN = 10;
 
     private final Vector2 v0 = new Vector2(0.5f, 0f);
 
@@ -18,17 +21,18 @@ public class MainShip extends Ship {
     private int pointer;                            //хранение номера последнего активного пальца
 
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.reloadInterval = 0.2f;
         setHeightProportion(0.15f);
         this.shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/LaserShoot7.wav"));
         this.bulletV = new Vector2(0, 0.5f);
         this.bulletHeight = 0.01f;
         this.damage = 1;
-        this.hp = 100;
+        this.hp = MAX_HP_FOR_MAIN;
     }
 
     public void resize(Rect worldBounds)  {
@@ -153,6 +157,20 @@ public class MainShip extends Ship {
         } else {
             return false;
         }
+    }
+
+    //метод, позволяет узнать, долетела ли пуля противника до нижней половины корабля игрока
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom()
+        );
+    }
+
+    public void restartGame() {     //обновление корабля при перезапуске игры
+        stop();
+        this.hp = MAX_HP_FOR_MAIN;
     }
 
 }
