@@ -170,7 +170,13 @@ public class MainShip extends Ship {
 
     public void restartGame() {     //обновление корабля при перезапуске игры
         stop();
+        pos.x = worldBounds.pos.x;
         this.hp = MAX_HP_FOR_MAIN;
+        flushDestroy();
+    }
+
+    public int getHP() {
+        return this.hp;
     }
 
 }

@@ -21,14 +21,14 @@ public class BtnNewGame extends ScaledTouchUpButton {
 
     @Override
     public void resize(Rect worldBounds) {
-        float posX = 0f;
-        float posY = worldBounds.getBottom()+0.25f;
-        pos.set(posX, posY);
+//        float posX = worldBounds.pos.x;
+//        float posY = worldBounds.pos.y-0.1f;
+        pos.set(worldBounds.pos.x, worldBounds.pos.y-0.1f);
     }
 
     @Override
     public void action() {
-        mainShip.flushDestroy();
+        //mainShip.flushDestroy();      //перенесено в метод restartGame
         mainShip.restartGame();
     }
 }

@@ -51,6 +51,8 @@ public class EnemyEmitter {
 
     private Rect worldBounds;
 
+    private int level;
+
     public EnemyEmitter(TextureAtlas atlas, EnemyPool enemyPool, Rect worldBounds) {
         this.enemyPool = enemyPool;
         TextureRegion textureSmallRegion = atlas.findRegion("enemy0");
@@ -64,7 +66,8 @@ public class EnemyEmitter {
     }
 
     //метод генерирования кораблей
-    public void generate(float delta) {
+    public void generate(float delta, int frags) {
+        level = frags / 10 + 1;
         generateTimer += delta;
         if(generateTimer >= generateInterval) {
             generateTimer = 0f;
@@ -77,7 +80,7 @@ public class EnemyEmitter {
                         bulletRegion,
                         ENEMY_SMALL_BULLET_HEIGHT,
                         ENEMY_SMALL_BULLET_VY,
-                        ENEMY_SMALL_DAMAGE,
+                        ENEMY_SMALL_DAMAGE * level,         // урон увеличивается с каждым уровнем
                         ENEMY_SMALL_RELOAD_INTERVAL,
                         ENEMY_SMALL_HEIGHT,
                         ENEMY_SMALL_HP,
@@ -90,7 +93,7 @@ public class EnemyEmitter {
                         bulletRegion,
                         ENEMY_MIDDLE_BULLET_HEIGHT,
                         ENEMY_MIDDLE_BULLET_VY,
-                        ENEMY_MIDDLE_DAMAGE,
+                        ENEMY_MIDDLE_DAMAGE * level,
                         ENEMY_MIDDLE_RELOAD_INTERVAL,
                         ENEMY_MIDDLE_HEIGHT,
                         ENEMY_MIDDLE_HP,
@@ -103,7 +106,7 @@ public class EnemyEmitter {
                         bulletRegion,
                         ENEMY_BIG_BULLET_HEIGHT,
                         ENEMY_BIG_BULLET_VY,
-                        ENEMY_BIG_DAMAGE,
+                        ENEMY_BIG_DAMAGE * level,
                         ENEMY_BIG_RELOAD_INTERVAL,
                         ENEMY_BIG_HEIGHT,
                         ENEMY_BIG_HP,
@@ -114,5 +117,13 @@ public class EnemyEmitter {
             enemy.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemy.getHalfWidth(), worldBounds.getRight() - enemy.getHalfWidth());
             enemy.setBottom(worldBounds.getTop());
         }
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

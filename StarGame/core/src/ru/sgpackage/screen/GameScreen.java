@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
@@ -25,9 +26,14 @@ import ru.sgpackage.sprite.game.Enemy;
 import ru.sgpackage.sprite.game.MainShip;
 import ru.sgpackage.sprite.menu.BtnClose;
 import ru.sgpackage.utils.EnemyEmitter;
+import ru.sgpackage.utils.Font;
 
 //Экран активной игры
 public class GameScreen extends Base2DScreen {
+
+    private static final String FRAGS = "Frags: ";
+    private static final String HP = "HP: ";
+    private static final String LEVEL = "Level: ";
 
     private TextureAtlas atlas;
     private Texture bg;
@@ -51,6 +57,13 @@ public class GameScreen extends Base2DScreen {
     private MessageGameOver messageGameOver;
     private BtnClose btnClose;
     private TextureAtlas atlasClose;
+
+    private Font font;                          //переменная для добавления шрифта
+    private StringBuilder sbFrags = new StringBuilder();
+    private StringBuilder sbHP = new StringBuilder();
+    private StringBuilder sbLevel = new StringBuilder();
+
+    int frags = 0;                              //подсчет количества убитых противников
 
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
@@ -81,6 +94,8 @@ public class GameScreen extends Base2DScreen {
         btnNewGame = new BtnNewGame(atlas, mainShip, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         btnClose = new BtnClose(atlasClose);
+        this.font = new Font("font/font.fnt", "font/font.png");
+        this.font.setSize(0.02f);                                      //проверка шрифта
 
     }
 
@@ -100,7 +115,7 @@ public class GameScreen extends Base2DScreen {
         }
         if(!mainShip.isDestroyed()) {
             mainShip.update(delta);
-            enemyEmitter.generate(delta);               //генератор вражеских кораблей по времени
+            enemyEmitter.generate(delta, frags);               //генератор вражеских кораблей по времени
             enemyPool.updateActiveSprites(delta);       //движение вражеских кораблей за счет передачи времени
         }
         bulletPool.updateActiveSprites(delta);
@@ -146,6 +161,9 @@ public class GameScreen extends Base2DScreen {
                 }
                 if(enemy.isBulletCollision(bullet)) {      //если пуля за границей экрана
                     enemy.damage(mainShip.getDamage());
+                    if(enemy.isDestroyed()) {               //если враг уничтожен пулей, +1 к счетчику убийств
+                        frags++;
+                    }
                     bullet.destroy();
                 }
             }
@@ -185,8 +203,17 @@ public class GameScreen extends Base2DScreen {
             btnNewGame.draw(batch);
             btnClose.draw(batch);
         }
-
+        printInfo();
         batch.end();
+    }
+
+    public void printInfo() {
+        sbFrags.setLength(0);
+        sbHP.setLength(0);
+        sbLevel.setLength(0);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop());
+        font.draw(batch, sbHP.append(HP).append(mainShip.getHP()), worldBounds.pos.x, worldBounds.getTop(), Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop(), Align.right);
     }
 
     @Override
@@ -212,6 +239,7 @@ public class GameScreen extends Base2DScreen {
         enemyPool.dispose();
         music.dispose();
         mainShip.dispose();
+        font.dispose();             //не забыть очистить от надписей память
         super.dispose();
     }
 
@@ -238,7 +266,7 @@ public class GameScreen extends Base2DScreen {
         explosion.set(0.15f, touch);
         */
         if(!mainShip.isDestroyed()) {
-            mainShip.touchDown(touch, pointer);        //добавил в блокноте, проверить дома
+            mainShip.touchDown(touch, pointer);
         }
         if(mainShip.isDestroyed()) {
             btnNewGame.touchDown(touch, pointer);
@@ -251,11 +279,13 @@ public class GameScreen extends Base2DScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
         if(!mainShip.isDestroyed()) {
-            mainShip.touchUp(pointer);                        //добавил в блокноте, проверить дома
+            mainShip.touchUp(pointer);
         }
         if(mainShip.isDestroyed()) {
             btnNewGame.touchUp(touch, pointer);
             btnClose.touchUp(touch, pointer);
+            frags = 0;
+            enemyEmitter.setLevel(1);
         }
         return super.touchUp(touch, pointer);
     }
