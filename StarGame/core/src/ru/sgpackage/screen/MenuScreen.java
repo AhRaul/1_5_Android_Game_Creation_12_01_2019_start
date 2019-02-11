@@ -44,9 +44,9 @@ public class MenuScreen extends Base2DScreen {
     public void show() {
         super.show();
 
-		bg = new Texture("starbg.jpg");
+		bg = new Texture("textures/starbg.jpg");
 		background = new Background(new TextureRegion(bg));
-		atlas = new TextureAtlas("menuAtlas.tpack");   //добавление трека
+		atlas = new TextureAtlas("textures/menuAtlas.tpack");   //добавление трека
         star = new Star[32];
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);

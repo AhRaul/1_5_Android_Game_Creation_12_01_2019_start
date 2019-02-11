@@ -80,10 +80,10 @@ public class GameScreen extends Base2DScreen {
     public void show() {
         super.show();
 
-        bg = new Texture("starbg.jpg");
+        bg = new Texture("textures/starbg.jpg");
         background = new Background(new TextureRegion(bg));
-        atlas = new TextureAtlas("mainAtlas.tpack");   //добавление трека
-        atlasClose = new TextureAtlas("menuAtlas.tpack");
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");   //добавление трека
+        atlasClose = new TextureAtlas("textures/menuAtlas.tpack");
         hpAtlas = new TextureAtlas("textures/hp10Var.pack");
         star = new Star[64];                                         //количество звёзд
         for(int i = 0; i < star.length; i++) {
