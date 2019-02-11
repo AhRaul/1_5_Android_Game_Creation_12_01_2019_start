@@ -8,7 +8,6 @@ import ru.sgpackage.math.Rect;
 public class HPOneScale extends Sprite {                                //ячейка здоровья
 
     private int state;          //состояние ячейки: 0-полная, ... 9-пустая, 10 - должна исчезнуть.
-    private Rect worldBounds;       //границы проекции координат игрового мира
     private int frames;
 
     public HPOneScale(TextureRegion region, int rows, int cols, int frames) {
@@ -19,7 +18,6 @@ public class HPOneScale extends Sprite {                                //яче
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
-        this.worldBounds = worldBounds;
     }
 
 

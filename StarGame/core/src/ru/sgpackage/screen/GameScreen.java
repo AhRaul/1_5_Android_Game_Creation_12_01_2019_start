@@ -271,10 +271,6 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        /*      //тест взрыва   (тестовые взрывы в точке прикосновении к экрану телефона)
-        Explosion explosion = explosionPool.obtain("explosion");
-        explosion.set(0.15f, touch);
-        */
         if(!mainShip.isDestroyed()) {
             mainShip.touchDown(touch, pointer);
         }

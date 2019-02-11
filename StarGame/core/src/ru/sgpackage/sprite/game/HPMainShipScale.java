@@ -25,18 +25,18 @@ public class HPMainShipScale extends Sprite {
         }
     }
 
-    public void resize(Rect worldBounds)  {
+    public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         this.worldBounds = worldBounds;
-        System.out.println(worldBounds.getWidth()/10f);
-        setPosition(worldBounds.getWidth()/10f);
+        System.out.println(worldBounds.getWidth() / 10f);
+        setPosition(worldBounds.getWidth() / 10f);
     }
 
     @Override
     public void draw(SpriteBatch batch) {
         setState();
         for (int i = 0; i < scale.length; i++) {
-            if(scale[i].getState() >=0 && scale[i].getState() < 10) {
+            if (scale[i].getState() >= 0 && scale[i].getState() < 10) {
                 scale[i].draw(batch);
             }
         }
@@ -44,12 +44,13 @@ public class HPMainShipScale extends Sprite {
 
     /**
      * set для опредлеения позции и размеров полосы здоровья
-     *
+     * <p>
      * (логика метода не универсальна, учтен случай только конкретно для 10 ячеек здоровья)
+     *
      * @param width - ширина одной ячейки полосы здоровья
      */
     public void setPosition(float width) {
-        float startpos = worldBounds.pos.x - width/2 - width*4;    //позиция первой ячейки здоровья
+        float startpos = worldBounds.pos.x - width / 2 - width * 4;    //позиция первой ячейки здоровья
         for (int i = 0; i < scale.length; i++) {
             scale[i].setWidthProportion(width);                      //определение размеров одной ячейки
             scale[i].setBottom(worldBounds.getBottom());                    //расположение ячейки на оси y
@@ -58,96 +59,31 @@ public class HPMainShipScale extends Sprite {
         }
     }
 
+    //v 1.1 сокращенная форма записи логики метода setState()
     //задать состояние (цвет) шкалы здоровья
     public void setState() {
-        if(mainShip.getHPPercent() >= 100) {
-            for(int i = 9; i >=0; i--) {
+        if (mainShip.getHPPercent() >= 100) {   //если здоровье на максимуме
+            for (int i = 9; i >= 0; i--) {
                 scale[i].setState(0);
             }
+            return;
+        }
 
-        } else if(mainShip.getHPPercent() >= 90) {
-            scale[9].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 8; i >=0; i--) {
-                scale[i].setState(0);
+        for (int i = 90; i >= 0; i = i - 10) {  //промежуточное состояние здоровья
+            if (mainShip.getHPPercent() >= i) {
+                for (int j = 9; j >= (i / 10) + 1; j--) {
+                    scale[j].setState(10);
+                }
+                scale[i / 10].setState(10 - mainShip.getHPPercent() % 10);
+                for (int j = (i / 10) - 1; j >= 0; j--) {
+                    scale[j].setState(0);
+                }
+                return;
             }
+        }
 
-        } else if (mainShip.getHPPercent() >= 80) {
-            scale[9].setState(10);
-            scale[8].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 7; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 70) {
-            for(int i = 9; i >=8; i--) {
-                scale[i].setState(10);
-            }
-            scale[7].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 6; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 60) {
-            for(int i = 9; i >=7; i--) {
-                scale[i].setState(10);
-            }
-            scale[6].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 5; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 50) {
-            for(int i = 9; i >=6; i--) {
-                scale[i].setState(10);
-            }
-            scale[5].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 4; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 40) {
-            for(int i = 9; i >=5; i--) {
-                scale[i].setState(10);
-            }
-            scale[4].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 3; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 30) {
-            for(int i = 9; i >=4; i--) {
-                scale[i].setState(10);
-            }
-            scale[3].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 2; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 20) {
-            for(int i = 9; i >=3; i--) {
-                scale[i].setState(10);
-            }
-            scale[2].setState(10 - mainShip.getHPPercent()%10);
-            for(int i = 1; i >=0; i--) {
-                scale[i].setState(0);
-            }
-
-        } else if (mainShip.getHPPercent() >= 10) {
-            for(int i = 9; i >=2; i--) {
-                scale[i].setState(10);
-            }
-            scale[1].setState(10 - mainShip.getHPPercent()%10);
-            scale[0].setState(0);
-
-        } else if (mainShip.getHPPercent() >= 0) {
-            for(int i = 9; i >=1; i--) {
-                scale[i].setState(10);
-            }
-            scale[0].setState(10 - mainShip.getHPPercent()%10);
-        } else {
-            for(int i = 9; i >=0; i--) {
-                scale[i].setState(10);
-            }
+        for (int j = 9; j >= 0; j--) {          //при нулевом уровне здоровья
+            scale[j].setState(10);
         }
     }
 }
