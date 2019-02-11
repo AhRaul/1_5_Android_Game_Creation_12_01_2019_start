@@ -23,6 +23,7 @@ import ru.sgpackage.sprite.death.BtnNewGame;
 import ru.sgpackage.sprite.death.MessageGameOver;
 import ru.sgpackage.sprite.game.Bullet;
 import ru.sgpackage.sprite.game.Enemy;
+import ru.sgpackage.sprite.game.HPMainShipScale;
 import ru.sgpackage.sprite.game.MainShip;
 import ru.sgpackage.sprite.menu.BtnClose;
 import ru.sgpackage.utils.EnemyEmitter;
@@ -37,6 +38,7 @@ public class GameScreen extends Base2DScreen {
 
     private TextureAtlas atlas;
     private Texture bg;
+    private TextureAtlas hpAtlas;
     private Background background;
     private Star star[];      //множество звезд
 
@@ -57,6 +59,8 @@ public class GameScreen extends Base2DScreen {
     private MessageGameOver messageGameOver;
     private BtnClose btnClose;
     private TextureAtlas atlasClose;
+
+    private HPMainShipScale hpMainShipScale;
 
     private Font font;                          //переменная для добавления шрифта
     private StringBuilder sbFrags = new StringBuilder();
@@ -80,6 +84,7 @@ public class GameScreen extends Base2DScreen {
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas("mainAtlas.tpack");   //добавление трека
         atlasClose = new TextureAtlas("menuAtlas.tpack");
+        hpAtlas = new TextureAtlas("textures/hp10Var.pack");
         star = new Star[64];                                         //количество звёзд
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
@@ -95,7 +100,8 @@ public class GameScreen extends Base2DScreen {
         messageGameOver = new MessageGameOver(atlas);
         btnClose = new BtnClose(atlasClose);
         this.font = new Font("font/font.fnt", "font/font.png");
-        this.font.setSize(0.02f);                                      //проверка шрифта
+        this.font.setSize(0.02f);                                      //размер шрифта
+        hpMainShipScale = new HPMainShipScale(hpAtlas, mainShip);
 
     }
 
@@ -204,6 +210,7 @@ public class GameScreen extends Base2DScreen {
             btnClose.draw(batch);
         }
         printInfo();
+        hpMainShipScale.draw(batch);
         batch.end();
     }
 
@@ -225,8 +232,9 @@ public class GameScreen extends Base2DScreen {
         }
         mainShip.resize(worldBounds);
         btnNewGame.resize(worldBounds);
-        messageGameOver.resize(worldBounds);    //ворлд боундс тут просто так (на всякий случай), чтоб не нарушать устоявшуюся форму записи
+        messageGameOver.resize(worldBounds);
         btnClose.resize(worldBounds);
+        hpMainShipScale.resize(worldBounds);
     }
 
     //очистка памяти при завершении игры
@@ -240,6 +248,8 @@ public class GameScreen extends Base2DScreen {
         music.dispose();
         mainShip.dispose();
         font.dispose();             //не забыть очистить от надписей память
+        messageGameOver.dispose();
+        hpMainShipScale.dispose();
         super.dispose();
     }
 
@@ -290,8 +300,8 @@ public class GameScreen extends Base2DScreen {
         return super.touchUp(touch, pointer);
     }
 
+    //метод возврата в окно меню (пока не используется)
     public void changeScreen() {
         starGame.setMenuScreen();
     }
-
 }

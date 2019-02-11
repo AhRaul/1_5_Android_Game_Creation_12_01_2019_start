@@ -11,7 +11,7 @@ import ru.sgpackage.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static final int MAX_HP_FOR_MAIN = 10;
+    private static final int MAX_HP_FOR_MAIN = 100;
 
     private final Vector2 v0 = new Vector2(0.5f, 0f);
 
@@ -179,4 +179,7 @@ public class MainShip extends Ship {
         return this.hp;
     }
 
+    public int getHPPercent() {
+        return (int)(((double)this.hp/(double)MAX_HP_FOR_MAIN)*100);
+    }
 }
