@@ -67,7 +67,7 @@ public class GameScreen extends Base2DScreen {
     private StringBuilder sbHP = new StringBuilder();
     private StringBuilder sbLevel = new StringBuilder();
 
-    int frags = 0;                              //подсчет количества убитых противников
+    private int frags = 0;                              //подсчет количества убитых противников
 
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
@@ -209,8 +209,8 @@ public class GameScreen extends Base2DScreen {
             btnNewGame.draw(batch);
             btnClose.draw(batch);
         }
-        printInfo();
         hpMainShipScale.draw(batch);
+        printInfo();
         batch.end();
     }
 
@@ -218,9 +218,10 @@ public class GameScreen extends Base2DScreen {
         sbFrags.setLength(0);
         sbHP.setLength(0);
         sbLevel.setLength(0);
-        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop());
-        font.draw(batch, sbHP.append(HP).append(mainShip.getHP()), worldBounds.pos.x, worldBounds.getTop(), Align.center);
-        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop(), Align.right);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft()+0.03f, worldBounds.getTop()-0.03f);
+        //font.draw(batch, sbHP.append(HP).append(mainShip.getHP()), worldBounds.pos.x, worldBounds.getTop(), Align.center);    //вывод уровня здоровья сверху на экране
+        font.draw(batch, sbHP.append(HP), worldBounds.pos.x, worldBounds.getBottom()+ 0.03f, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight()-0.03f, worldBounds.getTop()-0.03f, Align.right);
     }
 
     @Override

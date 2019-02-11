@@ -28,7 +28,6 @@ public class HPMainShipScale extends Sprite {
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         this.worldBounds = worldBounds;
-        System.out.println(worldBounds.getWidth() / 10f);
         setPosition(worldBounds.getWidth() / 10f);
     }
 
