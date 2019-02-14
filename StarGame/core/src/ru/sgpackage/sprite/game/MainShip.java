@@ -41,7 +41,7 @@ public class MainShip extends Ship {
     }
 
     @Override
-    public void update(float delta) {       //?? Откуда берется дельта?? , не нашел истоков
+    public void update(float delta) {
         super.update(delta);
         pos.mulAdd(v, delta);
         reloadTimer += delta;       //таймер, связанный с приходящей времени delta;
@@ -49,7 +49,12 @@ public class MainShip extends Ship {
             reloadTimer = 0f;
             shoot();
         }
-        if (pos.x < worldBounds.getLeft()+ 0.06f || pos.x > worldBounds.getRight()-0.06f) { //условие для остановки движения корабля при приближении к границе экрана
+        if (getLeft() < worldBounds.getLeft()) { //условие для остановки движения корабля при приближении к границе экрана
+            setLeft(worldBounds.getLeft());     //v.1.5.оптимизировано для сведения к 0 шанса выхода за контролируемую область экрана, и застревании корабля.
+            stop();
+        }
+        if (getRight() > worldBounds.getRight()) { //условие для остановки движения корабля при приближении к границе экрана
+            setRight(worldBounds.getRight());
             stop();
         }
     }
@@ -104,13 +109,13 @@ public class MainShip extends Ship {
             this.isPressedLeft = true;          //сохранение состояния нажатости кнопки
             this.isPressedRight = false;          //сохранение состояния нажатостии кнопки
             moveLeft();
-            return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
+            return super.touchDown(touch, pointer);
         } else if(!isPressedRight && !leftPlace(touch)) {	//если правая кнопка не нажата || если не попали по левой области
             this.pointer = pointer;         	//при правильном нажатии сохранение номера пальца
             this.isPressedLeft = false;
             this.isPressedRight = true;          //сохранение состояния нажатости кнопки
             moveRight();
-            return super.touchDown(touch, pointer);						//??не понимаю такой ретурн, здесь размещается boolean??
+            return super.touchDown(touch, pointer);
         } else {
             return false;
         }
