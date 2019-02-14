@@ -14,8 +14,9 @@ public class MessageGameOver extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
-        float posX = 0f;
-        float posY = 0f;
-        pos.set(posX, posY);
+//        float posX = 0f;
+//        float posY = 0f;
+//        pos.set(posX, posY);
+        pos.set(worldBounds.pos.x, worldBounds.pos.y);
     }
 }

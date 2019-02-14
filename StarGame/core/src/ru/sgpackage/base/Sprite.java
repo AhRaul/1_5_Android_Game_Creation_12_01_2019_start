@@ -10,11 +10,11 @@ import ru.sgpackage.utils.Regions;
 //отсюда наследуются только классы, отвечающие только за графические обьекты 1_5_4_ 0:51:00
 public class Sprite extends Rect {
 
-    protected float angle;      //угол поворота графического обьекта
-    protected float scale = 1f;      //,скалировение размера обьекта
+    protected float angle;              //угол поворота графического обьекта
+    protected float scale = 1f;         //скалировение размера обьекта
     protected TextureRegion[] regions;  //массив текстур из атласа ?
-    protected int frame;            //номер текущего кадра
-    private boolean isDestroyed;    //активность обьекта
+    protected int frame;                //номер текущего кадра
+    private boolean isDestroyed;        //активность обьекта
 
     public Sprite() {
     }
@@ -41,6 +41,12 @@ public class Sprite extends Rect {
         setHeight(height);
         float aspect = regions[frame].getRegionWidth() / (float) regions[frame].getRegionHeight();  //??
         setWidth(height * aspect);
+    }
+
+    public void setWidthProportion(float width) {
+        setWidth(width);
+        float aspect = regions[frame].getRegionHeight() / (float) regions[frame].getRegionWidth();
+        setHeight(width * aspect);
     }
 
     //установка границ экрана

@@ -71,6 +71,7 @@ public class Ship extends Sprite {
         damageTimer = 0f;
         hp -= damage;
         if(hp <= 0) {
+            hp=0;
             destroy();
             boom();
         }

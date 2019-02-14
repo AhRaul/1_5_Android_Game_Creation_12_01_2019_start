@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
@@ -22,15 +23,22 @@ import ru.sgpackage.sprite.death.BtnNewGame;
 import ru.sgpackage.sprite.death.MessageGameOver;
 import ru.sgpackage.sprite.game.Bullet;
 import ru.sgpackage.sprite.game.Enemy;
+import ru.sgpackage.sprite.game.HPMainShipScale;
 import ru.sgpackage.sprite.game.MainShip;
 import ru.sgpackage.sprite.menu.BtnClose;
 import ru.sgpackage.utils.EnemyEmitter;
+import ru.sgpackage.utils.Font;
 
 //Экран активной игры
 public class GameScreen extends Base2DScreen {
 
+    private static final String FRAGS = "Frags: ";
+    private static final String HP = "HP: ";
+    private static final String LEVEL = "Level: ";
+
     private TextureAtlas atlas;
     private Texture bg;
+    private TextureAtlas hpAtlas;
     private Background background;
     private Star star[];      //множество звезд
 
@@ -52,6 +60,15 @@ public class GameScreen extends Base2DScreen {
     private BtnClose btnClose;
     private TextureAtlas atlasClose;
 
+    private HPMainShipScale hpMainShipScale;
+
+    private Font font;                          //переменная для добавления шрифта
+    private StringBuilder sbFrags = new StringBuilder();
+    private StringBuilder sbHP = new StringBuilder();
+    private StringBuilder sbLevel = new StringBuilder();
+
+    private int frags = 0;                              //подсчет количества убитых противников
+
     public GameScreen(StarGame starGame) {
         this.starGame = starGame;
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/MusicFonGame.mp3"));
@@ -63,10 +80,11 @@ public class GameScreen extends Base2DScreen {
     public void show() {
         super.show();
 
-        bg = new Texture("starbg.jpg");
+        bg = new Texture("textures/starbg.jpg");
         background = new Background(new TextureRegion(bg));
-        atlas = new TextureAtlas("mainAtlas.tpack");   //добавление трека
-        atlasClose = new TextureAtlas("menuAtlas.tpack");
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");   //добавление трека
+        atlasClose = new TextureAtlas("textures/menuAtlas.tpack");
+        hpAtlas = new TextureAtlas("textures/hp10Var.pack");
         star = new Star[64];                                         //количество звёзд
         for(int i = 0; i < star.length; i++) {
             star[i] = new Star(atlas);
@@ -81,6 +99,9 @@ public class GameScreen extends Base2DScreen {
         btnNewGame = new BtnNewGame(atlas, mainShip, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         btnClose = new BtnClose(atlasClose);
+        this.font = new Font("font/font.fnt", "font/font.png");
+        this.font.setSize(0.02f);                                      //размер шрифта
+        hpMainShipScale = new HPMainShipScale(hpAtlas, mainShip);
 
     }
 
@@ -100,7 +121,7 @@ public class GameScreen extends Base2DScreen {
         }
         if(!mainShip.isDestroyed()) {
             mainShip.update(delta);
-            enemyEmitter.generate(delta);               //генератор вражеских кораблей по времени
+            enemyEmitter.generate(delta, frags);               //генератор вражеских кораблей по времени
             enemyPool.updateActiveSprites(delta);       //движение вражеских кораблей за счет передачи времени
         }
         bulletPool.updateActiveSprites(delta);
@@ -146,6 +167,9 @@ public class GameScreen extends Base2DScreen {
                 }
                 if(enemy.isBulletCollision(bullet)) {      //если пуля за границей экрана
                     enemy.damage(mainShip.getDamage());
+                    if(enemy.isDestroyed()) {               //если враг уничтожен пулей, +1 к счетчику убийств
+                        frags++;
+                    }
                     bullet.destroy();
                 }
             }
@@ -185,8 +209,19 @@ public class GameScreen extends Base2DScreen {
             btnNewGame.draw(batch);
             btnClose.draw(batch);
         }
-
+        hpMainShipScale.draw(batch);
+        printInfo();
         batch.end();
+    }
+
+    public void printInfo() {
+        sbFrags.setLength(0);
+        sbHP.setLength(0);
+        sbLevel.setLength(0);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft()+0.03f, worldBounds.getTop()-0.03f);
+        //font.draw(batch, sbHP.append(HP).append(mainShip.getHP()), worldBounds.pos.x, worldBounds.getTop(), Align.center);    //вывод уровня здоровья сверху на экране
+        font.draw(batch, sbHP.append(HP), worldBounds.pos.x, worldBounds.getBottom()+ 0.03f, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight()-0.03f, worldBounds.getTop()-0.03f, Align.right);
     }
 
     @Override
@@ -198,8 +233,9 @@ public class GameScreen extends Base2DScreen {
         }
         mainShip.resize(worldBounds);
         btnNewGame.resize(worldBounds);
-        messageGameOver.resize(worldBounds);    //ворлд боундс тут просто так (на всякий случай), чтоб не нарушать устоявшуюся форму записи
+        messageGameOver.resize(worldBounds);
         btnClose.resize(worldBounds);
+        hpMainShipScale.resize(worldBounds);
     }
 
     //очистка памяти при завершении игры
@@ -212,6 +248,9 @@ public class GameScreen extends Base2DScreen {
         enemyPool.dispose();
         music.dispose();
         mainShip.dispose();
+        font.dispose();             //не забыть очистить от надписей память
+        messageGameOver.dispose();
+        hpMainShipScale.dispose();
         super.dispose();
     }
 
@@ -233,12 +272,8 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        /*      //тест взрыва   (тестовые взрывы в точке прикосновении к экрану телефона)
-        Explosion explosion = explosionPool.obtain("explosion");
-        explosion.set(0.15f, touch);
-        */
         if(!mainShip.isDestroyed()) {
-            mainShip.touchDown(touch, pointer);        //добавил в блокноте, проверить дома
+            mainShip.touchDown(touch, pointer);
         }
         if(mainShip.isDestroyed()) {
             btnNewGame.touchDown(touch, pointer);
@@ -251,17 +286,19 @@ public class GameScreen extends Base2DScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
         if(!mainShip.isDestroyed()) {
-            mainShip.touchUp(pointer);                        //добавил в блокноте, проверить дома
+            mainShip.touchUp(pointer);
         }
         if(mainShip.isDestroyed()) {
             btnNewGame.touchUp(touch, pointer);
             btnClose.touchUp(touch, pointer);
+            frags = 0;
+            enemyEmitter.setLevel(1);
         }
         return super.touchUp(touch, pointer);
     }
 
+    //метод возврата в окно меню (пока не используется)
     public void changeScreen() {
         starGame.setMenuScreen();
     }
-
 }
